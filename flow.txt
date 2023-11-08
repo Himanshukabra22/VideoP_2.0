@@ -1,0 +1,16 @@
+//Go to directory having package.json file and run following commands
+sudo apt update
+sudo apt intall ffmeg redis nodejs npm curl wget
+npm i
+redis-server --deamonize yes //This will run redis server on port 6379 in de-attached mode.
+npm start //run server
+
+
+//below lines will make a post request with respected link.
+curl -X POST -H "Content-Type: application/json" -d '{"videoLink" : "https://drive.google.com/file/d/1_nDZSrtG7c8cm6pRHVy7y6gO9yzcFkgf/view?usp=share_link"}' http://localhost:3000/api/jobs
+
+//the processing status of the video can be checked using process id.
+curl http://localhost:3000/api/jobCheck/PROCESS_ID
+
+//the processed video can be downloaded using process id.
+curl http://localhost:3000/api/jobs/PROCESS_ID
