@@ -11,8 +11,22 @@ const videoQueue = require("../jobProcessor.js");
 
 require("dotenv").config();
 
+function matchLink(driveLink) {
+  const regex = /\/d\/(.+?)\/(?:view|edit|export)/;
+  const match = driveLink.match(regex);
+
+  if (match && match[1]) {
+      return true;
+  }
+  return false; // Return null if the input is not a valid Google Drive link
+}
+
 const jobPost = async (req, res) => {
   const videoLink = req.body.videoLink;
+  if(!matchLink(videoLink))
+  {
+      return res.status(400).json({message : "Wrong link added."});
+  }
   try {
     const job = await videoQueue.add({ videoLink });
     if (job) {
