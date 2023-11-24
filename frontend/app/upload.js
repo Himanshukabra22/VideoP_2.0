@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Linking, TextInput, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
 
 // constants
 import Colors from '../src/constants/colors';
@@ -8,68 +8,121 @@ import { SCREEN_WIDTH as width, SCREEN_HEIGHT as height } from '../src/constants
 //  components
 import Header from '../src/components/header';
 import InfoBanner from '../src/components/infoBanner';
-import Footer from '../src/components/footer';
+import Default from '../src/components/upload/default';
+import Processing from '../src/components/upload/processing';
+import Download from '../src/components/upload/download';
 
 const Upload = () => {
-    const [driveUrl, setDriveUrl] = useState('');
+    const [driveUrl, setDriveUrl] = useState("");
+    const [JOBID, setJOBID] = useState(null);
+    const [complete, setComplete] = useState(false);
+    const [loader, setLoader] = useState(false);
 
-    const onLinkSubmit = () => {
-        console.log('reached here');
-        // const url = 'https://drive.google.com/file/d/1U4I2e6yV0Q2oQ1oQy4j3Gf7qk8H1J2X_/view?usp=sharing';
-        // const url = driveUrl;
-        // const id = url.split('/')[5];
-        // const newUrl = `https://drive.google.com/uc?export=download&id=${id}`;
-        // Linking.openURL(newUrl);
-    };
+    let statusCheckInterval;
 
-    const handleKeyDown = (e) => {
-        // Check if Ctrl key and 'V' key are pressed simultaneously
-        console.log(e.ctrlKey, e.key);
-        if (e.ctrlKey && e.key === 'v') {
-            // Perform your onSubmit logic here
-            onLinkSubmit();
+    const onLinkSubmit = async () => {
+        try {
+            const response = await fetch('http://15.206.168.224:3000/api/jobs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    videoLink: driveUrl,
+                }),
+            });
+
+            if (!response.ok) {
+                console.error('Error:', response.status);
+                return;
+            }
+
+            const result = await response.json();
+
+            if (result.status === 'ok') {
+                console.log('Success:', result.message);
+                setJOBID(result.jobId);
+                setLoader(true);
+            } else {
+                console.error('Error:', result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
         }
     };
+
+    const checkStatus = async () => {
+        try {
+            const response = await fetch(`http://15.206.168.224:3000/api/jobCheck/${JOBID}`, {
+                method: 'GET',
+            });
+
+            if (!response.ok) {
+                console.error('Error:', response.status);
+                return;
+            }
+
+            const result = await response.json();
+
+            if (result.status === 'ok') {
+                if (result.message === 'Job processed completely.') {
+                    console.log('Job processed completely.');
+                    setComplete(true);
+                } else {
+                    console.log('Job is still processing.');
+                }
+            } else {
+                console.error('Error:', result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    };
+
+    // Start checking status when JOBID is not null
+    useEffect(() => {
+        if (JOBID && !complete) {
+            console.log('Starting status check...');
+            statusCheckInterval = setInterval(checkStatus, 1000);
+
+            // Cleanup function to clear the interval when the component unmounts or JOBID becomes null
+            return () => {
+                console.log('Clearing interval...');
+                clearInterval(statusCheckInterval);
+            };
+        }
+    }, [JOBID, complete]);
+
+    // Additional useEffect to stop the interval when the job is complete
+    useEffect(() => {
+        if (complete) {
+            console.log('Job is complete. Clearing interval...');
+            clearInterval(statusCheckInterval);
+            setLoader(false);
+        }
+    }, [complete]);
+
+    // const handleKeyDown = (e) => {
+    //     // Check if Ctrl key and 'V' key are pressed simultaneously
+    //     console.log(e.ctrlKey, e.key);
+    //     if (e.ctrlKey && e.key === 'v') {
+    //         // Perform your onSubmit logic here
+    //         onLinkSubmit();
+    //     }
+    // };
 
     return (
         <>
             <Header />
             <ScrollView style={styles.main} showsVerticalScrollIndicator={false}>
                 <View style={styles.container}>
-                    <View style={styles.firstContainer}>
-                        <View style={styles.headingView}>
-                            <Text style={styles.headingTxt}>Paste the Drive URL{'\n'}to remove the background</Text>
-                        </View>
-                        <View style={styles.driveInputView}>
-                            <TextInput
-                                style={styles.driveInput}
-                                placeholder="Google Drive URL"
-                                onChangeText={(text) => setDriveUrl(text)}
-                                value={driveUrl}
-                                onKeyPress={(e) => handleKeyDown(e)}
-                            />
-                            <TouchableOpacity activeOpacity={0.75} style={styles.driveInputBtn} onPress={() => onLinkSubmit()}>
-                                <Text style={styles.driveInputBtnTxt}>Upload</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.InstructionsView}>
-                            <View>
-                                <Text style={styles.commonTxt}>Download automatically start when paste link with <Text style={{ fontWeight: '700' }}>( CTRL + V )</Text> keys</Text>
-                            </View>
-                            <View style={styles.NoteView}>
-                                <Text style={styles.commonTxt}><Text style={styles.NoteTxt}>Note:</Text> Ensure that the Google Drive link provided is not restricted.{'\n'}Set <Text style={styles.BoldTxt}>'Manage Access'</Text> to <Text style={styles.BoldTxt}>"Anyone with the link"</Text> for smooth accessibility.</Text>
-                            </View>
-                        </View>
-                    </View>
-                    {/* <View style={{
-                        // marginTop: 100,
-                        width: '100%',
-                    }}> */}
-                    <InfoBanner />
-                    {/* </View> */}
-                    {/* <View style={{ marginTop: 100, width: '100%' }}>
-                <Footer />
-            </View> */}
+                    {loader ? <Processing /> :
+                        complete ? <Download setComplete={setComplete} JOBID={JOBID} /> :
+                            (<>
+                                <Default driveUrl={driveUrl} setDriveUrl={setDriveUrl} onLinkSubmit={onLinkSubmit} />
+                                <InfoBanner />
+                            </>)
+                    }
                 </View>
             </ScrollView>
         </>
