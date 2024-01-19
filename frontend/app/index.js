@@ -34,8 +34,6 @@ const Home = (props) => {
                     {
                         Platform.IS_WEB && width > 700 && <Image source={require('../assets/images/SwirlingArrow.png')} style={styles.SwirlingArrow} />
                     }
-                    {/* <View style={{ width: 100, height: 200, backgroundColor: 'black' }} /> */}
-                    {/* <Image source={require('../../assets/images/ShadeCircles.png')} style={styles.ShadeCircles} /> */}
                     <InfoBanner />
                     <View style={styles.SiteAboutBox}>
                         <View>
@@ -114,10 +112,10 @@ const styles = StyleSheet.create({
     },
     SwirlingArrow: {
         position: 'absolute',
-        top: 130,
-        right: 150,
-        width: width / 5.143,
-        height: 280,
+        top: 70,
+        right: 140,
+        width: 310,
+        height: 310,
     },
     ShadeCircles: {
         aspectRatio: 1,

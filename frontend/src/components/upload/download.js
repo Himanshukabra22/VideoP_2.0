@@ -25,7 +25,7 @@ const Download = (props) => {
                     </View>
                     <View style={styles.Buttons}>
                         <TouchableOpacity style={styles.DownloadBtn} onPress={() => {
-                            window.open(`http://15.206.168.224:3000/api/jobs/${JOBID}`);
+                            window.open(`${process.env.EXPO_PUBLIC_BASE_URL}/jobs/${JOBID}`);
                         }}>
                             <Text style={styles.DownloadBtnTxt}>Download Your Video</Text>
                         </TouchableOpacity>

@@ -17,12 +17,12 @@ const Upload = () => {
     const [JOBID, setJOBID] = useState(null);
     const [complete, setComplete] = useState(false);
     const [loader, setLoader] = useState(false);
-
+    
     let statusCheckInterval;
-
+    console.log(process.env.EXPO_PUBLIC_BASE_URL);
     const onLinkSubmit = async () => {
         try {
-            const response = await fetch('http://15.206.168.224:3000/api/jobs', {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_BASE_URL}/jobs`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ const Upload = () => {
 
     const checkStatus = async () => {
         try {
-            const response = await fetch(`http://15.206.168.224:3000/api/jobCheck/${JOBID}`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_BASE_URL}/jobCheck/${JOBID}`, {
                 method: 'GET',
             });
 
@@ -101,15 +101,6 @@ const Upload = () => {
             setLoader(false);
         }
     }, [complete]);
-
-    // const handleKeyDown = (e) => {
-    //     // Check if Ctrl key and 'V' key are pressed simultaneously
-    //     console.log(e.ctrlKey, e.key);
-    //     if (e.ctrlKey && e.key === 'v') {
-    //         // Perform your onSubmit logic here
-    //         onLinkSubmit();
-    //     }
-    // };
 
     return (
         <>

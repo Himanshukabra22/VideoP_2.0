@@ -33,35 +33,6 @@ const Auth = () => {
         <>
             <View style={styles.Container}>
                 <AuthBg />
-                {/* Loading Bar */}
-                {/* <LoadingBar color={Colors.typoWhite} ref={ref} style={{ height: 3, borderRadius: 20 }} />
-                <Button onPress={() => ref.current.continuousStart()}>
-                    <Text>
-                        Start Continuous Loading Bar
-                    </Text>
-                </Button>
-                <Button onPress={() => ref.current.complete()}>
-                    <Text>
-                        Complete
-                    </Text>
-                </Button> */}
-                {/* Snackbar */}
-                {/* <Snackbar
-                    visible={snackVisible}
-                    onDismiss={() => setSnackVisible(false)}
-                    action={{
-                        label: 'Undo',
-                        onPress: () => {
-                            console.log('snackbar button clicked!')
-                        },
-                    }}
-                    duration={2000}
-                    style={{ backgroundColor: Colors.typoWhite, color: Colors.primary }}
-                >
-                <Text style={{ color: Colors.primary }}>
-                    Hey there! I&apos;m a Snackbar.
-                </Text>
-                </Snackbar> */}
                 <View style={styles.mainContainer}>
                     <View style={styles.LogoView}>
                         <Image
