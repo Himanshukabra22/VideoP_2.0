@@ -17,7 +17,6 @@ const UploadVideo = (props) => {
                     <Image source={require('../../assets/images/Cloud_Upload.png')} style={styles.Img} />
                 </View>
                 <View style={styles.subContainer}>
-                    {/* <Link href="/upload" > */}
                     <TouchableOpacity activeOpacity={0.75} style={styles.UploadVideoBtn} onPress={() => {
                         router.push('/upload');
                     }}>

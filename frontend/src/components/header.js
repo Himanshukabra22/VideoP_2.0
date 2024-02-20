@@ -9,7 +9,6 @@ import * as Platform from '../constants/platform';
 
 const Header = () => {
     const router = useRouter();
-    const img = 'https://lh3.googleusercontent.com/a/ACg8ocJeNOks3NynMczVETRtQorWS8-SWU4XxublttudK3Y1VOI=s192-c-rg-br100';
     const [profileImg, setProfileImg] = useState('');
 
     return (
@@ -36,7 +35,7 @@ const Header = () => {
                     </View>
                     :
                     <TouchableOpacity activeOpacity={0.6} style={styles.ProfileImgBox}>
-                        <Image style={styles.ProfileImg} source={{ uri: img }} />
+                        <Image style={styles.ProfileImg} source={{ uri: profileImg }} />
                     </TouchableOpacity>
             }
         </View>
