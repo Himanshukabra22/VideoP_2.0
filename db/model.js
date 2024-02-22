@@ -17,7 +17,12 @@ const dataSchema = new mongoose.Schema({
     date: {
         type: Number,
         required: true,
-      }
+      },
+    status : {
+        type: String,
+        enum : ["added", "processing", "completed", "failed"],
+        default : "added"
+    }
 });
 
 //we will create a new connection
